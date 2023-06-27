@@ -7,19 +7,19 @@ export const registerController = async (req, res) => {
         const{ name, email, address, phone, password } = req.body;
         //validations
         if(!name){
-            return res.send({error: "Name is required"});
+            return res.send({message: "Name is required"});
         }
         if(!email){
-            return res.send({error: "Email is required"});
+            return res.send({message: "Email is required"});
         }
         if(!address){
-            return res.send({error: "Address is required"});
+            return res.send({message: "Address is required"});
         }
         if(!phone){
-            return res.send({error: "Phone no is required"});
+            return res.send({message: "Phone no is required"});
         }
         if(!password){
-            return res.send({error: "{Password} is required"});
+            return res.send({message: "{Password} is required"});
         }
 
         //check user
@@ -28,7 +28,7 @@ export const registerController = async (req, res) => {
         //existing user
         if(existingUser){
             return res.status(200).send({
-                success : true,
+                success : false,
                 message : "Already registered, Please login"
             })
         }
@@ -79,13 +79,15 @@ export const LoginController = async (req, res) => {
         if(!passMatch){
             return res.status(404).send({
                 success: false,
-                message: "Passwoed does not match"
+                message: "Password does not match"
             })
         }
 
         //create token
         const token = await JWT.sign({_id: user._id}, process.env.JWT_SECRET, {expiresIn : "7d"});
         res.status(200).send({
+            success: true,
+            message: "Login Successfull",
             user : {
                 name:user.name,
                 email: user.email,
@@ -95,7 +97,6 @@ export const LoginController = async (req, res) => {
     });
 
     } catch (error) { 
-        console.log(error);
         res.status(500).send({
             success: false,
             message: "Error while login",
